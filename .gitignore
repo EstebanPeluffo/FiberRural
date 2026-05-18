@@ -1,0 +1,25 @@
+# ── FLUTTER ───────────────────────────────
+Frontend/.dart_tool/
+Frontend/build/
+Frontend/.flutter-plugins
+Frontend/.flutter-plugins-dependencies
+Frontend/.packages
+
+# Plataformas generadas automáticamente
+Frontend/linux/
+Frontend/macos/
+Frontend/windows/
+Frontend/ios/
+Frontend/web/
+
+# ── PYTHON ────────────────────────────────
+Backend/__pycache__/
+Backend/*.pyc
+Backend/*.pyo
+Backend/venv/
+Backend/.env
+
+# ── GENERAL ───────────────────────────────
+.DS_Store
+Thumbs.db
+*.log
