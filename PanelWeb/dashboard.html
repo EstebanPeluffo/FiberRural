@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin — FiberRural</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 11px 14px; text-align: left; font-size: 11px; color: var(--blue, #5B9BD5); font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; background: rgba(91,155,213,0.06); }
+        td { padding: 11px 14px; font-size: 13px; color: #E8EDF3; border-bottom: 1px solid rgba(91,155,213,0.07); transition: background 0.15s; }
+        tbody tr:hover td { background: rgba(91,155,213,0.05); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        select.estado-select {
+            background: rgba(91,155,213,0.08);
+            color: #E8EDF3;
+            border: 1px solid rgba(91,155,213,0.18);
+            border-radius: 7px;
+            padding: 5px 10px;
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        select.estado-select:hover { border-color: #5B9BD5; }
+
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; }
+        .badge-pendiente { background: rgba(240,192,0,0.12); color: #f0c000; border: 1px solid rgba(240,192,0,0.25); }
+        .badge-proceso   { background: rgba(91,155,213,0.12); color: #7EB8F0; border: 1px solid rgba(91,155,213,0.25); }
+        .badge-resuelto  { background: rgba(0,204,68,0.10); color: #4ddd88; border: 1px solid rgba(0,204,68,0.22); }
+
+        .nav-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            background: #161B22;
+            border: 1px solid rgba(91,155,213,0.15);
+            border-radius: 12px;
+            padding: 6px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 9px 14px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #8B96A5;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .nav-tab:hover { color: #7EB8F0; background: rgba(91,155,213,0.06); }
+        .nav-tab.active { background: rgba(91,155,213,0.15); color: #7EB8F0; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-text">
+        <h1>📡 FiberRural</h1>
+        <p>Panel administrativo del sistema</p>
+    </div>
+    <button class="logout-btn" onclick="cerrarSesion()">Cerrar sesión</button>
+</header>
+
+<div class="container">
+
+    <!-- CARDS -->
+    <div class="grid">
+        <div class="card" onclick="goTo('users')">
+            <p> Usuarios</p>
+            <h2 id="statUsuarios">--</h2>
+        </div>
+        <div class="card" onclick="goTo('reports')">
+            <p> Reportes</p>
+            <h2 id="statReportes">--</h2>
+        </div>
+        <div class="card" onclick="goTo('active')">
+            <p> Activos</p>
+            <h2 id="statActivos">--</h2>
+        </div>
+        <div class="card" onclick="goTo('resolved')">
+            <p> Resueltos</p>
+            <h2 id="statResueltos">--</h2>
+        </div>
+    </div>
+
+    <!-- NAV TABS -->
+    <div class="nav-tabs">
+        <button class="nav-tab" onclick="goTo('users')"   id="tab-users">Usuarios</button>
+        <button class="nav-tab active" onclick="goTo('reports')" id="tab-reports">Todos los Reportes</button>
+        <button class="nav-tab" onclick="goTo('active')"  id="tab-active">Activos</button>
+        <button class="nav-tab" onclick="goTo('resolved')" id="tab-resolved">Resueltos</button>
+    </div>
+
+    <!-- SECCIÓN USUARIOS -->
+    <div id="users" class="section hidden">
+        <h2>Usuarios registrados</h2>
+        <table>
+            <thead><tr><th>ID</th><th>Usuario</th><th>Email</th></tr></thead>
+            <tbody id="tablaUsuarios"></tbody>
+        </table>
+    </div>
+
+    <!-- SECCIÓN REPORTES -->
+    <div id="reports" class="section">
+        <h2>Todos los reportes</h2>
+        <table>
+            <thead><tr><th>ID</th><th>Usuario</th><th>Tipo</th><th>Descripción</th><th>Dirección</th><th>Estado</th><th>Fecha</th></tr></thead>
+            <tbody id="tablaReportes"></tbody>
+        </table>
+    </div>
+
+    <!-- SECCIÓN ACTIVOS -->
+    <div id="active" class="section hidden">
+        <h2>Reportes activos</h2>
+        <table>
+            <thead><tr><th>ID</th><th>Usuario</th><th>Tipo</th><th>Descripción</th><th>Dirección</th><th>Estado</th><th>Fecha</th></tr></thead>
+            <tbody id="tablaActivos"></tbody>
+        </table>
+    </div>
+
+    <!-- SECCIÓN RESUELTOS -->
+    <div id="resolved" class="section hidden">
+        <h2>Reportes resueltos</h2>
+        <table>
+            <thead><tr><th>ID</th><th>Usuario</th><th>Tipo</th><th>Descripción</th><th>Dirección</th><th>Fecha</th></tr></thead>
+            <tbody id="tablaResueltos"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

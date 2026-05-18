@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin — FiberRural</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue:       #5B9BD5;
+            --blue-light: #7EB8F0;
+            --blue-glow:  rgba(91,155,213,0.18);
+            --bg:         #0D1117;
+            --bg-card:    #161B22;
+            --border:     rgba(91,155,213,0.18);
+            --text:       #E8EDF3;
+            --text-muted: #8B96A5;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Fondo decorativo */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(91,155,213,0.08) 0%, transparent 70%);
+            top: -150px; left: -150px;
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(91,155,213,0.06) 0%, transparent 70%);
+            bottom: -100px; right: -100px;
+            pointer-events: none;
+        }
+
+        .login-wrap {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-icon {
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, var(--blue), var(--blue-light));
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 14px;
+            box-shadow: 0 8px 24px var(--blue-glow);
+        }
+
+        .brand h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--blue-light), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--blue), transparent);
+        }
+
+        .form-group { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(91,155,213,0.06);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--text);
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(91,155,213,0.12);
+        }
+
+        input::placeholder { color: #4a5568; }
+
+        .error-msg {
+            font-size: 12px;
+            color: #fc8181;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-msg.visible { display: block; }
+
+        .alert {
+            padding: 11px 14px;
+            border-radius: 9px;
+            font-size: 13px;
+            margin-bottom: 18px;
+            display: none;
+        }
+
+        .alert.visible { display: block; }
+        .alert.success { background: rgba(0,204,68,0.1); color: #4ddd88; border: 1px solid rgba(0,204,68,0.2); }
+        .alert.danger  { background: rgba(252,129,129,0.1); color: #fc8181; border: 1px solid rgba(252,129,129,0.2); }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--blue-light), var(--blue));
+            border: none;
+            border-radius: 9px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            margin-top: 6px;
+            box-shadow: 0 4px 16px var(--blue-glow);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(91,155,213,0.35);
+        }
+
+        .btn:active { transform: translateY(0); }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-wrap">
+    <div class="brand">
+        <div class="brand-icon">📡</div>
+        <h1>FiberRural</h1>
+        <p>Panel administrativo</p>
+    </div>
+
+    <div class="card">
+        <div id="divMensaje" class="alert"></div>
+
+        <form id="formLogin">
+            <div class="form-group">
+                <label for="txtCorreo">Correo electrónico</label>
+                <input type="email" id="txtCorreo" placeholder="admin@fiberrural.com">
+                <span id="errorCorreo" class="error-msg"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="txtPassword">Contraseña</label>
+                <input type="password" id="txtPassword" placeholder="••••••••">
+                <span id="errorPassword" class="error-msg"></span>
+            </div>
+
+            <button type="submit" class="btn">Entrar al panel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const API = "http:iplocal:8000";
+
+const form        = document.getElementById("formLogin");
+const correo      = document.getElementById("txtCorreo");
+const pass        = document.getElementById("txtPassword");
+const divMensaje  = document.getElementById("divMensaje");
+
+function mostrarError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = msg ? "error-msg visible" : "error-msg";
+}
+
+function mostrarMensaje(tipo, msg) {
+    divMensaje.textContent = msg;
+    divMensaje.className = `alert visible ${tipo}`;
+}
+
+function validar() {
+    let ok = true;
+    const email = correo.value.trim();
+    const password = pass.value;
+
+    if (!email) { mostrarError("errorCorreo", "El correo es obligatorio"); ok = false; }
+    else if (!email.includes("@")) { mostrarError("errorCorreo", "Correo inválido"); ok = false; }
+    else mostrarError("errorCorreo", "");
+
+    if (!password) { mostrarError("errorPassword", "La contraseña es obligatoria"); ok = false; }
+    else if (password.length < 6) { mostrarError("errorPassword", "Mínimo 6 caracteres"); ok = false; }
+    else mostrarError("errorPassword", "");
+
+    return ok;
+}
+
+form.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    if (!validar()) { mostrarMensaje("danger", "Corrige los errores del formulario"); return; }
+
+    try {
+        const response = await fetch(`${API}/admin/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: correo.value.trim(), password: pass.value })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            sessionStorage.setItem("adminEmail", data.email);
+            mostrarMensaje("success", "Acceso correcto. Entrando al panel...");
+            setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
+        } else {
+            const err = await response.json();
+            mostrarMensaje("danger", err.detail || "Credenciales incorrectas");
+        }
+    } catch (e) {
+        mostrarMensaje("danger", "Error de conexión con el servidor");
+    }
+});
+</script>
+</body>
+</html>
