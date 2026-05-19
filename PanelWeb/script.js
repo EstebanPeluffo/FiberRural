@@ -1,5 +1,5 @@
-const API = "http:iplocal:8000";
-
+//const API = "http:iplocal:8000";
+const API = "http://172.18.36.240:8000";
 if (!sessionStorage.getItem("adminEmail")) {
     window.location.href = "index.html";
 }

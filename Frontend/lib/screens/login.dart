@@ -17,6 +17,7 @@ class _PantallaInicioState extends State<PantallaInicio> {
   final TextEditingController passwordController = TextEditingController();
   String? _errorUsuario;
   String? _errorPassword;
+  bool _verPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +57,22 @@ class _PantallaInicioState extends State<PantallaInicio> {
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
                 controller: passwordController,
-                obscureText: true,
+                obscureText: !_verPassword,
                 decoration: InputDecoration(
                   hintText: 'Contraseña',
                   border: const OutlineInputBorder(),
                   errorText: _errorPassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _verPassword ? Icons.visibility_off : Icons.visibility,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _verPassword = !_verPassword;
+                      });
+                    },
+                  ),
                 ),
               ),
             ),

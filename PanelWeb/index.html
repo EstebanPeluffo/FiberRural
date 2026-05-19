@@ -206,10 +206,17 @@
             </div>
 
             <div class="form-group">
-                <label for="txtPassword">Contraseña</label>
-                <input type="password" id="txtPassword" placeholder="••••••••">
-                <span id="errorPassword" class="error-msg"></span>
-            </div>
+    <label for="txtPassword">Contraseña</label>
+    <div style="position: relative;">
+        <input type="password" id="txtPassword" placeholder="••••••••" style="padding-right: 42px;">
+        <button type="button" id="btnOjo" onclick="togglePassword()"
+            style="position:absolute; right:12px; top:50%; transform:translateY(-50%);
+                   background:none; border:none; cursor:pointer; color:#8B96A5; font-size:16px; padding:0; line-height:1;">
+            👁️
+        </button>
+ </div>
+    <span id="errorPassword" class="error-msg"></span>
+</div>
 
             <button type="submit" class="btn">Entrar al panel</button>
         </form>
@@ -217,7 +224,7 @@
 </div>
 
 <script>
-const API = "http:iplocal:8000";
+const API = "http://172.18.36.240:8000";
 
 const form        = document.getElementById("formLogin");
 const correo      = document.getElementById("txtCorreo");
@@ -228,6 +235,18 @@ function mostrarError(id, msg) {
     const el = document.getElementById(id);
     el.textContent = msg;
     el.className = msg ? "error-msg visible" : "error-msg";
+}
+
+function togglePassword() {
+    const input = document.getElementById("txtPassword");
+    const btn = document.getElementById("btnOjo");
+    if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "🙈";
+    } else {
+        input.type = "password";
+        btn.textContent = "👁️";
+    }
 }
 
 function mostrarMensaje(tipo, msg) {
