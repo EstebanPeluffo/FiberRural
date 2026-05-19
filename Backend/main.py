@@ -18,6 +18,7 @@ from consultas import (
     get_todos_reportes,
     get_todos_usuarios,
     actualizar_estado_reporte,
+    get_reportes_usuario,
 )
 
 app = FastAPI()
@@ -29,7 +30,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── APP MÓVIL ──────────────────────────────────────
+# APP MÓVIL
 
 @app.post("/login")
 def login(data: LoginData):
@@ -72,7 +73,15 @@ def crear_reporte_endpoint(data: ReporteData):
         raise HTTPException(status_code=500, detail="Error al crear el reporte")
     return {"success": True, "mensaje": "Reporte creado correctamente"}
 
-# ── PANEL WEB ADMIN ────────────────────────────────
+@app.get("/reportes/{id_usuario}")
+def reportes_usuario(id_usuario: int):
+    reportes = get_reportes_usuario(id_usuario)
+    for r in reportes:
+        if r.get("fecha"):
+            r["fecha"] = str(r["fecha"])
+    return reportes
+
+# PANEL WEB ADMIN
 
 @app.post("/admin/login")
 def admin_login(data: AdminLoginData):

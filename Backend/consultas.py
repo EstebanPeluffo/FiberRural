@@ -88,6 +88,21 @@ def crear_reporte(id_usuario, tipo_falla, descripcion, direccion):
     finally:
         connection.close()
 
+def get_reportes_usuario(id_usuario):
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = """
+                SELECT id, tipo_falla, descripcion, direccion, estado, fecha
+                FROM detalles_reporte
+                WHERE id_usuario = %s
+                ORDER BY fecha DESC
+            """
+            cursor.execute(sql, (id_usuario,))
+            return cursor.fetchall()
+    finally:
+        connection.close()
+
 def get_admin_by_email(email):
     connection = get_db_connection()
     try:

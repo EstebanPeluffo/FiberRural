@@ -26,7 +26,6 @@ class MenuPrincipal extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // — Saludo —
             Text(
               'Bienvenido, $usuario',
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -36,10 +35,7 @@ class MenuPrincipal extends StatelessWidget {
               'Reporta fallas de tu servicio de Internet',
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
-
             const SizedBox(height: 20),
-
-            // — Sin reportes activos —
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -55,10 +51,7 @@ class MenuPrincipal extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
-            // — Acciones principales —
             Row(
               children: [
                 Expanded(
@@ -90,7 +83,9 @@ class MenuPrincipal extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const Historial()),
+                        MaterialPageRoute(
+                          builder: (_) => Historial(idUsuario: idUsuario),
+                        ),
                       );
                     },
                     icon: const Icon(Icons.list_alt),
@@ -109,10 +104,7 @@ class MenuPrincipal extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 24),
-
-            // — Estado del servicio —
             const Text(
               'Estado del servicio',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -136,10 +128,7 @@ class MenuPrincipal extends StatelessWidget {
               'Disponible',
               Colors.green,
             ),
-
             const SizedBox(height: 24),
-
-            // — Métricas —
             const Text(
               'Resumen',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
