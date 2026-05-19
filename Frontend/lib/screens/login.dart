@@ -107,7 +107,7 @@ class _PantallaInicioState extends State<PantallaInicio> {
                 }
                 if (!valido) return;
 
-                final url = Uri.parse("http://192.168.100.31:8000/login");
+                final url = Uri.parse("http://172.18.36.240:8000/login");
                 final response = await http.post(
                   url,
                   headers: {"Content-Type": "application/json"},

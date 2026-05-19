@@ -45,7 +45,7 @@ class _PantallaOlvidePasswordState extends State<PantallaOlvidePassword> {
     setState(() => _cargando = true);
 
     try {
-      final url = Uri.parse("http://IPlocal:8000/verificar-email");
+      final url = Uri.parse("http://172.18.36.240:8000/verificar-email");
       final response = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
