@@ -49,7 +49,7 @@ class _ReportarFallaState extends State<ReportarFalla> {
 
     try {
       final url = Uri.parse(
-        "http://IPlocal:8000/crear-reporte",
+        "http://192.168.100.31:8000/crear-reporte",
       ); // Cambiar por URL del servidor
       final response = await http.post(
         url,

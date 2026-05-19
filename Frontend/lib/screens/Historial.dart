@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'detalles.dart';
 
 class Historial extends StatefulWidget {
   final int idUsuario;
@@ -24,7 +25,7 @@ class _HistorialState extends State<Historial> {
   Future<void> _cargarReportes() async {
     try {
       final url = Uri.parse(
-        "http://TU_IP:8000/reportes/${widget.idUsuario}",
+        "http://192.168.100.31:8000/reportes/${widget.idUsuario}",
       ); // Cambiar por URL del servidor
       final response = await http.get(url);
 
@@ -127,103 +128,113 @@ class _HistorialState extends State<Historial> {
                     itemCount: _reportes.length,
                     itemBuilder: (context, index) {
                       final r = _reportes[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(14),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    r["tipo_falla"]
-                                        .toString()
-                                        .replaceAll("_", " ")
-                                        .toUpperCase(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => Detalles(reporte: r),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(14),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      r["tipo_falla"]
+                                          .toString()
+                                          .replaceAll("_", " ")
+                                          .toUpperCase(),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: _colorEstado(
-                                        r["estado"],
-                                      ).withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
                                         color: _colorEstado(
                                           r["estado"],
-                                        ).withOpacity(0.4),
+                                        ).withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: _colorEstado(
+                                            r["estado"],
+                                          ).withOpacity(0.4),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        r["estado"],
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: _colorEstado(r["estado"]),
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ),
-                                    child: Text(
-                                      r["estado"],
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: _colorEstado(r["estado"]),
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                r["descripcion"],
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey,
+                                  ],
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.location_on_outlined,
-                                    size: 14,
+                                const SizedBox(height: 8),
+                                Text(
+                                  r["descripcion"],
+                                  style: const TextStyle(
+                                    fontSize: 13,
                                     color: Colors.grey,
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    r["direccion"],
-                                    style: const TextStyle(
-                                      fontSize: 12,
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on_outlined,
+                                      size: 14,
                                       color: Colors.grey,
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.calendar_today_outlined,
-                                    size: 14,
-                                    color: Colors.grey,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    r["fecha"].toString().substring(0, 10),
-                                    style: const TextStyle(
-                                      fontSize: 12,
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      r["direccion"],
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.calendar_today_outlined,
+                                      size: 14,
                                       color: Colors.grey,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      r["fecha"].toString().substring(0, 10),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );

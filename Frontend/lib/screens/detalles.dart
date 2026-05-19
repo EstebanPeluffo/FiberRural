@@ -1,65 +1,198 @@
 import 'package:flutter/material.dart';
 
 class Detalles extends StatelessWidget {
-  const Detalles({super.key});
+  final Map<String, dynamic> reporte;
+
+  const Detalles({super.key, required this.reporte});
+
+  Color _colorEstado(String estado) {
+    switch (estado) {
+      case "Resuelto":
+        return Colors.green;
+      case "En Proceso":
+        return Colors.blue;
+      default:
+        return Colors.orange;
+    }
+  }
+
+  IconData _iconoTipo(String tipo) {
+    switch (tipo) {
+      case "sin_internet":
+        return Icons.wifi_off;
+      case "internet_lento":
+        return Icons.speed;
+      case "cable_danado":
+        return Icons.cable;
+      default:
+        return Icons.report_problem;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final estado = reporte["estado"] ?? "Pendiente";
+    final tipo = reporte["tipo_falla"] ?? "";
+    final descripcion = reporte["descripcion"] ?? "";
+    final direccion = reporte["direccion"] ?? "";
+    final fecha = reporte["fecha"]?.toString().substring(0, 10) ?? "";
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detalles del Reporte'),
         backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        centerTitle: true,
       ),
-      body: Stack(
-        children: [
-          //Textos arriba a la derecha
-          Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 17, right: 20),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Encabezado con icono y tipo
+            Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: const [
-                  Text(
-                    'Estado: En Proceso', //TEXTO 1
-                    style: TextStyle(fontSize: 18),
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(_iconoTipo(tipo), size: 60, color: Colors.blue),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 14),
                   Text(
-                    'Reporte realizado el 03 de marzo de 2026', //TEXTO 2
-                    style: TextStyle(fontSize: 16),
+                    tipo.replaceAll("_", " ").toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _colorEstado(estado).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: _colorEstado(estado).withOpacity(0.4),
+                      ),
+                    ),
+                    child: Text(
+                      estado,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: _colorEstado(estado),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
 
-          //Contenido central (lo dejamos igual)
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.support_agent,
-                  size: 80,
-                  color: Color.fromARGB(255, 243, 170, 33),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Contacta con el soporte',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Escríbele al soporte',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
+            const SizedBox(height: 28),
+
+            // Información del reporte
+            _seccion('Descripción', descripcion, Icons.description_outlined),
+            const SizedBox(height: 16),
+            _seccion('Dirección', direccion, Icons.location_on_outlined),
+            const SizedBox(height: 16),
+            _seccion('Fecha del reporte', fecha, Icons.calendar_today_outlined),
+
+            const SizedBox(height: 28),
+
+            // Contactar soporte
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue.shade100),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: const [
+                      Icon(Icons.support_agent, color: Colors.blue),
+                      SizedBox(width: 8),
+                      Text(
+                        'Contactar soporte',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      prefixIcon: const Icon(Icons.chat),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Escríbele al soporte...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      prefixIcon: const Icon(Icons.chat_outlined),
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        'Enviar mensaje',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _seccion(String titulo, String contenido, IconData icono) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icono, color: Colors.blue, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  titulo,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
+                const SizedBox(height: 4),
+                Text(contenido, style: const TextStyle(fontSize: 15)),
               ],
             ),
           ),
