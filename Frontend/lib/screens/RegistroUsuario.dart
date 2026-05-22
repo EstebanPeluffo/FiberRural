@@ -76,7 +76,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     setState(() => _cargando = true);
 
     try {
-      final url = Uri.parse("http://172.18.36.240:8000/registro");
+      final url = Uri.parse("https://fiberrural-api.onrender.com/registro");
       final response = await http.post(
         url,
         headers: {"Content-Type": "application/json"},

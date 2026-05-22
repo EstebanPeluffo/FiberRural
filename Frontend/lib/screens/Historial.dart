@@ -25,7 +25,7 @@ class _HistorialState extends State<Historial> {
   Future<void> _cargarReportes() async {
     try {
       final url = Uri.parse(
-        "http://172.18.36.240:8000/reportes/${widget.idUsuario}",
+        "https://fiberrural-api.onrender.com/reportes/${widget.idUsuario}",
       ); // Cambiar por URL del servidor
       final response = await http.get(url);
 

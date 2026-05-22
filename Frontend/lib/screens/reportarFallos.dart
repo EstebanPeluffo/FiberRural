@@ -49,7 +49,7 @@ class _ReportarFallaState extends State<ReportarFalla> {
 
     try {
       final url = Uri.parse(
-        "http://172.18.36.240:8000/crear-reporte",
+        "https://fiberrural-api.onrender.com/crear-reporte",
       ); // Cambiar por URL del servidor
       final response = await http.post(
         url,
