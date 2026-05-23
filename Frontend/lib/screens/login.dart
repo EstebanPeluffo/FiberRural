@@ -19,6 +19,7 @@ class _PantallaInicioState extends State<PantallaInicio> {
   final TextEditingController passwordController = TextEditingController();
   String? _errorUsuario;
   String? _errorPassword;
+  bool _mostrarContrasena = false; // ✅ NUEVO: Variable para mostrar/ocultar
 
   @override
   Widget build(BuildContext context) {
@@ -54,15 +55,32 @@ class _PantallaInicioState extends State<PantallaInicio> {
               ),
             ),
             const SizedBox(height: 20),
+            // ✅ MODIFICADO: TextField de contraseña con ojito
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
                 controller: passwordController,
-                obscureText: true,
+                obscureText:
+                    !_mostrarContrasena, // Mostrar u ocultar según el estado
                 decoration: InputDecoration(
                   hintText: 'Contraseña',
                   border: const OutlineInputBorder(),
                   errorText: _errorPassword,
+                  // ✅ NUEVO: Agregar icono de ojo al final
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _mostrarContrasena
+                          ? Icons
+                                .visibility // Ojo abierto
+                          : Icons.visibility_off, // Ojo cerrado
+                      color: Colors.blue,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _mostrarContrasena = !_mostrarContrasena;
+                      });
+                    },
+                  ),
                 ),
               ),
             ),

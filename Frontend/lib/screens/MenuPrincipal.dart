@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Historial.dart';
 import 'reportarFallos.dart';
 import 'detalles.dart';
+import 'login.dart'; // ✅ NUEVO: Import de PantallaInicio
 
 class MenuPrincipal extends StatefulWidget {
   final String usuario;
@@ -67,6 +68,43 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
     }
   }
 
+  // ✅ NUEVA FUNCIÓN: Cerrar Sesión (sin tocar backend)
+  Future<void> _cerrarSesion(BuildContext context) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // Limpiar datos locales
+      await prefs.remove('token');
+      await prefs.remove('usuario_id');
+      await prefs.remove('usuario');
+      await prefs.remove('idUsuario');
+
+      if (!mounted) return;
+
+      // Redirigir a login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const PantallaInicio()),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sesión cerrada correctamente'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cerrar sesión: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   Color _colorEstado(String estado) {
     switch (estado) {
       case "Resuelto":
@@ -81,11 +119,35 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // ✅ MODIFICADO: AppBar con botón de Cerrar Sesión
       appBar: AppBar(
         title: const Text('FiberRural'),
         centerTitle: true,
         backgroundColor: Colors.blue,
         foregroundColor: Colors.black,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                await _cerrarSesion(context);
+              },
+              icon: const Icon(Icons.logout, size: 18),
+              label: const Text('Salir'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: _cargarReportes,
