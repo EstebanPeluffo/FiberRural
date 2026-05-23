@@ -109,7 +109,9 @@ class _PantallaOlvidePasswordState extends State<PantallaOlvidePassword> {
     setState(() => _cargando = true);
 
     try {
-      final url = Uri.parse("http://192.168.100.31:8000/cambiar-password");
+      final url = Uri.parse(
+        "https://fiberrural-api.onrender.com/cambiar-password",
+      );
       final response = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
