@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Historial.dart';
 import 'reportarFallos.dart';
 import 'detalles.dart';
-import 'login.dart'; // ✅ NUEVO: Import de PantallaInicio
+import 'login.dart';
 
 class MenuPrincipal extends StatefulWidget {
   final String usuario;
@@ -68,7 +68,7 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
     }
   }
 
-  // ✅ NUEVA FUNCIÓN: Cerrar Sesión (sin tocar backend)
+  // ✅ FUNCIÓN: Cerrar Sesión
   Future<void> _cerrarSesion(BuildContext context) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -119,36 +119,87 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ✅ MODIFICADO: AppBar con botón de Cerrar Sesión
       appBar: AppBar(
         title: const Text('FiberRural'),
         centerTitle: true,
         backgroundColor: Colors.blue,
         foregroundColor: Colors.black,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                await _cerrarSesion(context);
-              },
-              icon: const Icon(Icons.logout, size: 18),
-              label: const Text('Salir'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                side: const BorderSide(color: Colors.white, width: 1.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+      ),
+      // ✅ NUEVO: Drawer con menú de 3 rayitas
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // Header del drawer
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Colors.blue),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Icon(Icons.person, size: 48, color: Colors.white),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.usuario,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Opciones del menú (aquí tu compañero puede agregar más)
+            // ListTile(
+            //   leading: const Icon(Icons.home),
+            //   title: const Text('Inicio'),
+            //   onTap: () {
+            //     Navigator.pop(context);
+            //   },
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.settings),
+            //   title: const Text('Configuración'),
+            //   onTap: () {
+            //     Navigator.pop(context);
+            //     // Aquí irá la pantalla de configuración
+            //   },
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.help),
+            //   title: const Text('Ayuda'),
+            //   onTap: () {
+            //     Navigator.pop(context);
+            //     // Aquí irá la pantalla de ayuda
+            //   },
+            // ),
+            // Separador
+            const Divider(),
+            // ✅ SALIR: Texto subrayado al final
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20, top: 10),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context); // Cierra el drawer primero
+                    _cerrarSesion(context);
+                  },
+                  child: Text(
+                    'Salir',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.red,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: _cargarReportes,
