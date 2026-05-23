@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReportarFalla extends StatefulWidget {
   final int idUsuario;
@@ -48,19 +50,27 @@ class _ReportarFallaState extends State<ReportarFalla> {
     setState(() => _cargando = true);
 
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
       final url = Uri.parse(
         "https://fiberrural-api.onrender.com/crear-reporte",
-      ); // Cambiar por URL del servidor
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "id_usuario": widget.idUsuario,
-          "tipo_falla": _tipoFalla,
-          "descripcion": _descripcionController.text.trim(),
-          "direccion": _direccionController.text.trim(),
-        }),
       );
+      final response = await http
+          .post(
+            url,
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer $token",
+            },
+            body: jsonEncode({
+              "id_usuario": widget.idUsuario,
+              "tipo_falla": _tipoFalla,
+              "descripcion": _descripcionController.text.trim(),
+              "direccion": _direccionController.text.trim(),
+            }),
+          )
+          .timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         if (!mounted) return;
@@ -133,9 +143,7 @@ class _ReportarFallaState extends State<ReportarFalla> {
                     child: Text('Cable Dañado'),
                   ),
                 ],
-                onChanged: (value) {
-                  setState(() => _tipoFalla = value);
-                },
+                onChanged: (value) => setState(() => _tipoFalla = value),
               ),
               const SizedBox(height: 25),
               const Text(

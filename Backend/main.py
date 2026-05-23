@@ -1,5 +1,6 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from modelos import LoginData, RegistroData, RecuperarData, CambiarPasswordData, ReporteData, AdminLoginData
 from consultas import (
     get_user,
@@ -20,6 +21,8 @@ from consultas import (
     actualizar_estado_reporte,
     get_reportes_usuario,
 )
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
 
 app = FastAPI()
 
@@ -30,7 +33,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# APP MÓVIL
+# ── JWT CONFIG ─────────────────────────────────────
+SECRET_KEY = "fiberrural_secret_key_2026"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 horas
+
+security = HTTPBearer()
+
+def crear_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def verificar_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        usuario = payload.get("sub")
+        if usuario is None:
+            raise HTTPException(status_code=401, detail="Token inválido")
+        return payload
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Token inválido o expirado")
+
+# ── APP MÓVIL ──────────────────────────────────────
 
 @app.post("/login")
 def login(data: LoginData):
@@ -39,7 +65,15 @@ def login(data: LoginData):
         raise HTTPException(status_code=401, detail="Usuario no encontrado")
     if not verificar_password(data.password, user["password"]):
         raise HTTPException(status_code=401, detail="Contraseña incorrecta")
-    return {"success": True, "id": user["id"], "usuario": user["usuario"]}
+    
+    token = crear_token({"sub": user["usuario"], "id": user["id"]})
+    
+    return {
+        "success": True,
+        "id": user["id"],
+        "usuario": user["usuario"],
+        "token": token
+    }
 
 @app.post("/registro")
 def registro(data: RegistroData):
@@ -67,21 +101,21 @@ def cambiar_password(data: CambiarPasswordData):
     return {"success": True, "mensaje": "Contraseña actualizada correctamente"}
 
 @app.post("/crear-reporte")
-def crear_reporte_endpoint(data: ReporteData):
+def crear_reporte_endpoint(data: ReporteData, token: dict = Depends(verificar_token)):
     exito = crear_reporte(data.id_usuario, data.tipo_falla, data.descripcion, data.direccion)
     if not exito:
         raise HTTPException(status_code=500, detail="Error al crear el reporte")
     return {"success": True, "mensaje": "Reporte creado correctamente"}
 
 @app.get("/reportes/{id_usuario}")
-def reportes_usuario(id_usuario: int):
+def reportes_usuario(id_usuario: int, token: dict = Depends(verificar_token)):
     reportes = get_reportes_usuario(id_usuario)
     for r in reportes:
         if r.get("fecha"):
             r["fecha"] = str(r["fecha"])
     return reportes
 
-# PANEL WEB ADMIN
+# ── PANEL WEB ADMIN ────────────────────────────────
 
 @app.post("/admin/login")
 def admin_login(data: AdminLoginData):

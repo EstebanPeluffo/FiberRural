@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Historial.dart';
 import 'reportarFallos.dart';
 import 'detalles.dart';
@@ -33,10 +35,15 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
 
   Future<void> _cargarReportes() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
       final url = Uri.parse(
         "https://fiberrural-api.onrender.com/reportes/${widget.idUsuario}",
-      ); // Cambiar por URL del servidor
-      final response = await http.get(url);
+      );
+      final response = await http
+          .get(url, headers: {"Authorization": "Bearer $token"})
+          .timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         final reportes = jsonDecode(response.body);
@@ -132,14 +139,12 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
                         ..._reportesActivos
                             .map(
                               (r) => GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => Detalles(reporte: r),
-                                    ),
-                                  );
-                                },
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => Detalles(reporte: r),
+                                  ),
+                                ),
                                 child: Card(
                                   margin: const EdgeInsets.only(bottom: 10),
                                   elevation: 2,
@@ -273,7 +278,6 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
               ),
 
               const SizedBox(height: 24),
-
               const Text(
                 'Estado del servicio',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -299,7 +303,6 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
               ),
 
               const SizedBox(height: 24),
-
               const Text(
                 'Resumen',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

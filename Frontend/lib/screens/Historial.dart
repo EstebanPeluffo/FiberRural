@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'detalles.dart';
 
 class Historial extends StatefulWidget {
@@ -24,10 +26,15 @@ class _HistorialState extends State<Historial> {
 
   Future<void> _cargarReportes() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
       final url = Uri.parse(
         "https://fiberrural-api.onrender.com/reportes/${widget.idUsuario}",
-      ); // Cambiar por URL del servidor
-      final response = await http.get(url);
+      );
+      final response = await http
+          .get(url, headers: {"Authorization": "Bearer $token"})
+          .timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         setState(() {
@@ -129,14 +136,12 @@ class _HistorialState extends State<Historial> {
                     itemBuilder: (context, index) {
                       final r = _reportes[index];
                       return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => Detalles(reporte: r),
-                            ),
-                          );
-                        },
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => Detalles(reporte: r),
+                          ),
+                        ),
                         child: Card(
                           margin: const EdgeInsets.only(bottom: 12),
                           elevation: 2,

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'MenuPrincipal.dart';
 import 'RegistroUsuario.dart';
 import 'recuperarPassword.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class PantallaInicio extends StatefulWidget {
   const PantallaInicio({super.key});
@@ -17,7 +19,6 @@ class _PantallaInicioState extends State<PantallaInicio> {
   final TextEditingController passwordController = TextEditingController();
   String? _errorUsuario;
   String? _errorPassword;
-  bool _verPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -57,22 +58,11 @@ class _PantallaInicioState extends State<PantallaInicio> {
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
                 controller: passwordController,
-                obscureText: !_verPassword,
+                obscureText: true,
                 decoration: InputDecoration(
                   hintText: 'Contraseña',
                   border: const OutlineInputBorder(),
                   errorText: _errorPassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _verPassword ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _verPassword = !_verPassword;
-                      });
-                    },
-                  ),
                 ),
               ),
             ),
@@ -122,16 +112,32 @@ class _PantallaInicioState extends State<PantallaInicio> {
                 final url = Uri.parse(
                   "https://fiberrural-api.onrender.com/login",
                 );
-                final response = await http.post(
-                  url,
-                  headers: {"Content-Type": "application/json"},
-                  body: jsonEncode({
-                    "usuario": usuarioController.text,
-                    "password": passwordController.text,
-                  }),
-                );
+                final response = await http
+                    .post(
+                      url,
+                      headers: {"Content-Type": "application/json"},
+                      body: jsonEncode({
+                        "usuario": usuarioController.text,
+                        "password": passwordController.text,
+                      }),
+                    )
+                    .timeout(const Duration(seconds: 60));
+
                 if (response.statusCode == 200) {
                   final data = jsonDecode(response.body);
+
+                  // Guardar token
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setString('token', data["token"].toString());
+                  await prefs.setInt(
+                    'idUsuario',
+                    int.parse(data["id"].toString()),
+                  );
+                  await prefs.setString(
+                    'usuario',
+                    (data["usuario"] ?? "Usuario").toString(),
+                  );
+
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

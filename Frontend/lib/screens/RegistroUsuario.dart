@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'login.dart';
+import 'dart:async';
 
 class PantallaRegistro extends StatefulWidget {
   const PantallaRegistro({super.key});
@@ -77,15 +78,17 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
 
     try {
       final url = Uri.parse("https://fiberrural-api.onrender.com/registro");
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "usuario": usuarioController.text.trim(),
-          "password": passwordController.text,
-          "email": emailController.text.trim(),
-        }),
-      );
+      final response = await http
+          .post(
+            url,
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode({
+              "usuario": usuarioController.text.trim(),
+              "password": passwordController.text,
+              "email": emailController.text.trim(),
+            }),
+          )
+          .timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         if (!mounted) return;

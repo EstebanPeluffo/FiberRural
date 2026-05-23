@@ -3,3 +3,4 @@ uvicorn
 pymysql
 bcrypt
 cryptography
+python-jose
