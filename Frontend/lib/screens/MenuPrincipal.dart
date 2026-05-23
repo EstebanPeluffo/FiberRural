@@ -135,12 +135,13 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
               icon: const Icon(Icons.logout, size: 18),
               label: const Text('Salir'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.transparent,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 8,
                 ),
+                side: const BorderSide(color: Colors.white, width: 1.5),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

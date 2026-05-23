@@ -40,7 +40,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'FiberRural',
-
+      // ✅ NUEVO: Quitar las franjas amarillas y negras del teclado en Android
+      builder: (context, child) {
+        return ScrollConfiguration(
+          behavior: ScrollBehavior().copyWith(
+            physics: const ClampingScrollPhysics(),
+          ),
+          child: child!,
+        );
+      },
       home: pantallaInicial,
     );
   }
