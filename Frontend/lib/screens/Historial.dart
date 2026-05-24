@@ -28,14 +28,12 @@ class _HistorialState extends State<Historial> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
-
       final url = Uri.parse(
         "https://fiberrural-api.onrender.com/reportes/${widget.idUsuario}",
       );
       final response = await http
           .get(url, headers: {"Authorization": "Bearer $token"})
           .timeout(const Duration(seconds: 60));
-
       if (response.statusCode == 200) {
         setState(() {
           _reportes = jsonDecode(response.body);
@@ -57,22 +55,34 @@ class _HistorialState extends State<Historial> {
   Color _colorEstado(String estado) {
     switch (estado) {
       case "Resuelto":
-        return Colors.green;
+        return const Color(0xFF4DDD88);
       case "En Proceso":
-        return Colors.blue;
+        return const Color(0xFF5B9BD5);
       default:
-        return Colors.orange;
+        return const Color(0xFFF0C000);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0D1117),
       appBar: AppBar(
-        title: const Text('Mis Reportes'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        title: const Text(
+          'Mis Reportes',
+          style: TextStyle(
+            color: Color(0xFF5B9BD5),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFF161B22),
+        elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Color(0xFF5B9BD5)),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: const Color(0xFF21262D), height: 1),
+        ),
       ),
       body: Column(
         children: [
@@ -80,32 +90,23 @@ class _HistorialState extends State<Historial> {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
               children: [
-                _metricCard(
-                  'Total',
-                  '$_total',
-                  Colors.blue.shade50,
-                  Colors.blue.shade700,
-                ),
+                _metricCard('Total', '$_total', const Color(0xFF5B9BD5)),
                 const SizedBox(width: 10),
-                _metricCard(
-                  'Activos',
-                  '$_activos',
-                  Colors.orange.shade50,
-                  Colors.orange.shade700,
-                ),
+                _metricCard('Activos', '$_activos', const Color(0xFFF0C000)),
                 const SizedBox(width: 10),
                 _metricCard(
                   'Resueltos',
                   '$_resueltos',
-                  Colors.green.shade50,
-                  Colors.green.shade700,
+                  const Color(0xFF4DDD88),
                 ),
               ],
             ),
           ),
           Expanded(
             child: _cargando
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF5B9BD5)),
+                  )
                 : _reportes.isEmpty
                 ? const Center(
                     child: Column(
@@ -114,17 +115,23 @@ class _HistorialState extends State<Historial> {
                         Icon(
                           Icons.inbox_outlined,
                           size: 60,
-                          color: Colors.grey,
+                          color: Color(0xFF8B96A5),
                         ),
                         SizedBox(height: 12),
                         Text(
                           'No tienes reportes aún',
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF8B96A5),
+                          ),
                         ),
                         SizedBox(height: 4),
                         Text(
                           'Crea tu primer reporte desde el menú principal',
-                          style: TextStyle(fontSize: 13, color: Colors.grey),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF8B96A5),
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -142,104 +149,104 @@ class _HistorialState extends State<Historial> {
                             builder: (_) => Detalles(reporte: r),
                           ),
                         ),
-                        child: Card(
+                        child: Container(
                           margin: const EdgeInsets.only(bottom: 12),
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF161B22),
                             borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: const Color(0xFF21262D)),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(14),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      r["tipo_falla"]
-                                          .toString()
-                                          .replaceAll("_", " ")
-                                          .toUpperCase(),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    r["tipo_falla"]
+                                        .toString()
+                                        .replaceAll("_", " ")
+                                        .toUpperCase(),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: Color(0xFFE8EDF3),
                                     ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: _colorEstado(
+                                        r["estado"],
+                                      ).withOpacity(0.12),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
                                         color: _colorEstado(
                                           r["estado"],
-                                        ).withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                          color: _colorEstado(
-                                            r["estado"],
-                                          ).withOpacity(0.4),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        r["estado"],
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: _colorEstado(r["estado"]),
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                        ).withOpacity(0.4),
                                       ),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  r["descripcion"],
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey,
+                                    child: Text(
+                                      r["estado"],
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: _colorEstado(r["estado"]),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                r["descripcion"],
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Color(0xFF8B96A5),
                                 ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on_outlined,
-                                      size: 14,
-                                      color: Colors.grey,
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on_outlined,
+                                    size: 14,
+                                    color: Color(0xFF8B96A5),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    r["direccion"],
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFF8B96A5),
                                     ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      r["direccion"],
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey,
-                                      ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.calendar_today_outlined,
+                                    size: 14,
+                                    color: Color(0xFF8B96A5),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    r["fecha"].toString().substring(0, 10),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFF8B96A5),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.calendar_today_outlined,
-                                      size: 14,
-                                      color: Colors.grey,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      r["fecha"].toString().substring(0, 10),
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       );
@@ -251,18 +258,14 @@ class _HistorialState extends State<Historial> {
     );
   }
 
-  Widget _metricCard(
-    String label,
-    String value,
-    Color bgColor,
-    Color textColor,
-  ) {
+  Widget _metricCard(String label, String value, Color color) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: bgColor,
+          color: const Color(0xFF161B22),
           borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFF21262D)),
         ),
         child: Column(
           children: [
@@ -271,13 +274,13 @@ class _HistorialState extends State<Historial> {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: textColor,
+                color: color,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               label,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Color(0xFF8B96A5)),
             ),
           ],
         ),

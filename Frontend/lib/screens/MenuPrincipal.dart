@@ -63,17 +63,13 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
               .toList();
         });
       }
-    } catch (e) {
-      // Error de conexión
-    }
+    } catch (e) {}
   }
 
-  // ✅ FUNCIÓN: Cerrar Sesión
   Future<void> _cerrarSesion(BuildContext context) async {
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      // Limpiar datos locales
       await prefs.remove('token');
       await prefs.remove('usuario_id');
       await prefs.remove('usuario');
@@ -81,7 +77,6 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
 
       if (!mounted) return;
 
-      // Redirigir a login
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const PantallaInicio()),
@@ -119,30 +114,44 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0D1117),
+
       appBar: AppBar(
-        title: const Text('FiberRural'),
+        title: const Text(
+          'FiberRural',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF5B9BD5),
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.black,
+        backgroundColor: const Color(0xFF161B22),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFFE8EDF3)),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: const Color(0xFF21262D), height: 1),
+        ),
       ),
-      // ✅ NUEVO: Drawer con menú de 3 rayitas
+
       drawer: Drawer(
+        backgroundColor: const Color(0xFF161B22),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            // Header del drawer
             DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.blue),
+              decoration: const BoxDecoration(color: Color(0xFF1C2A3A)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const Icon(Icons.person, size: 48, color: Colors.white),
+                  const Icon(Icons.person, size: 48, color: Color(0xFFE8EDF3)),
                   const SizedBox(height: 8),
                   Text(
                     widget.usuario,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFFE8EDF3),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -150,42 +159,18 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
                 ],
               ),
             ),
-            // Opciones del menú (aquí tu compañero puede agregar más)
-            // ListTile(
-            //   leading: const Icon(Icons.home),
-            //   title: const Text('Inicio'),
-            //   onTap: () {
-            //     Navigator.pop(context);
-            //   },
-            // ),
-            // ListTile(
-            //   leading: const Icon(Icons.settings),
-            //   title: const Text('Configuración'),
-            //   onTap: () {
-            //     Navigator.pop(context);
-            //     // Aquí irá la pantalla de configuración
-            //   },
-            // ),
-            // ListTile(
-            //   leading: const Icon(Icons.help),
-            //   title: const Text('Ayuda'),
-            //   onTap: () {
-            //     Navigator.pop(context);
-            //     // Aquí irá la pantalla de ayuda
-            //   },
-            // ),
-            // Separador
-            const Divider(),
-            // ✅ SALIR: Texto subrayado al final
+
+            const Divider(color: Color(0xFF30363D)),
+
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 20, top: 10),
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.pop(context); // Cierra el drawer primero
+                    Navigator.pop(context);
                     _cerrarSesion(context);
                   },
-                  child: Text(
+                  child: const Text(
                     'Salir',
                     style: TextStyle(
                       color: Colors.red,
@@ -201,6 +186,7 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
           ],
         ),
       ),
+
       body: RefreshIndicator(
         onRefresh: _cargarReportes,
         child: SingleChildScrollView(
@@ -214,13 +200,17 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
+                  color: Color(0xFFE8EDF3),
                 ),
               ),
+
               const SizedBox(height: 4),
+
               const Text(
                 'Reporta fallas de tu servicio de Internet',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+                style: TextStyle(fontSize: 14, color: Color(0xFF8B96A5)),
               ),
+
               const SizedBox(height: 20),
 
               _reportesActivos.isEmpty
@@ -228,14 +218,17 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
+                        color: const Color(0xFF161B22),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.blue.shade100),
+                        border: Border.all(color: const Color(0xFF30363D)),
                       ),
                       child: const Center(
                         child: Text(
                           'No tienes reportes activos',
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF8B96A5),
+                          ),
                         ),
                       ),
                     )
@@ -247,9 +240,12 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color: Color(0xFFE8EDF3),
                           ),
                         ),
+
                         const SizedBox(height: 10),
+
                         ..._reportesActivos
                             .map(
                               (r) => GestureDetector(
@@ -260,10 +256,14 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
                                   ),
                                 ),
                                 child: Card(
+                                  color: const Color(0xFF161B22),
                                   margin: const EdgeInsets.only(bottom: 10),
                                   elevation: 2,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
+                                    side: const BorderSide(
+                                      color: Color(0xFF30363D),
+                                    ),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(12),
@@ -283,18 +283,22 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 13,
+                                                color: Color(0xFFE8EDF3),
                                               ),
                                             ),
+
                                             const SizedBox(height: 4),
+
                                             Text(
                                               r["direccion"],
                                               style: const TextStyle(
                                                 fontSize: 12,
-                                                color: Colors.grey,
+                                                color: Color(0xFF8B96A5),
                                               ),
                                             ),
                                           ],
                                         ),
+
                                         Container(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 10,
@@ -351,9 +355,10 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
                       icon: const Icon(Icons.add_circle_outline),
                       label: const Text('Nuevo reporte'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: const Color(0xFF5B9BD5),
                         foregroundColor: Colors.white,
-                        elevation: 5,
+                        elevation: 4,
+                        shadowColor: const Color(0xFF5B9BD5),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -361,7 +366,9 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
                       ),
                     ),
                   ),
+
                   const SizedBox(width: 12),
+
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () async {
@@ -377,11 +384,12 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
                       icon: const Icon(Icons.list_alt),
                       label: const Text('Mis reportes'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.blue,
-                        elevation: 2,
+                        backgroundColor: const Color(0xFF161B22),
+                        foregroundColor: const Color(0xFF5B9BD5),
+                        elevation: 4,
+                        shadowColor: Colors.blue,
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        side: const BorderSide(color: Colors.blue),
+                        side: const BorderSide(color: Color(0xFF30363D)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -392,23 +400,32 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
               ),
 
               const SizedBox(height: 24),
+
               const Text(
                 'Estado del servicio',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFE8EDF3),
+                ),
               ),
+
               const SizedBox(height: 12),
+
               _estadoItem(
                 Icons.wifi,
                 'Conexión principal',
                 'Activo',
                 Colors.green,
               ),
+
               _estadoItem(
                 Icons.speed,
                 'Velocidad de bajada',
                 'Estable',
                 Colors.orange,
               ),
+
               _estadoItem(
                 Icons.support_agent,
                 'Soporte técnico',
@@ -417,32 +434,43 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
               ),
 
               const SizedBox(height: 24),
+
               const Text(
                 'Resumen',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFE8EDF3),
+                ),
               ),
+
               const SizedBox(height: 12),
+
               Row(
                 children: [
                   _metricCard(
                     'Total',
                     '$_total',
-                    Colors.blue.shade50,
-                    Colors.blue.shade700,
+                    const Color(0xFF161B22),
+                    const Color(0xFF5B9BD5),
                   ),
+
                   const SizedBox(width: 10),
+
                   _metricCard(
                     'Activos',
                     '$_activos',
-                    Colors.orange.shade50,
-                    Colors.orange.shade700,
+                    const Color(0xFF161B22),
+                    Colors.orange,
                   ),
+
                   const SizedBox(width: 10),
+
                   _metricCard(
                     'Resueltos',
                     '$_resueltos',
-                    Colors.green.shade50,
-                    Colors.green.shade700,
+                    const Color(0xFF161B22),
+                    Colors.green,
                   ),
                 ],
               ),
@@ -458,9 +486,17 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          Icon(icon, color: Colors.blue, size: 20),
+          const Icon(Icons.circle, color: Color(0xFF5B9BD5), size: 10),
+
           const SizedBox(width: 10),
-          Expanded(child: Text(label, style: const TextStyle(fontSize: 14))),
+
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 14, color: Color(0xFFE8EDF3)),
+            ),
+          ),
+
           Text(
             estado,
             style: TextStyle(
@@ -486,6 +522,7 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFF30363D)),
         ),
         child: Column(
           children: [
@@ -497,10 +534,14 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
                 color: textColor,
               ),
             ),
+
             const SizedBox(height: 2),
+
+            const Text(''),
+
             Text(
               label,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Color(0xFF8B96A5)),
             ),
           ],
         ),

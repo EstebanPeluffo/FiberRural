@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'login.dart';
 import 'dart:async';
+import 'login.dart';
 
 class PantallaRegistro extends StatefulWidget {
   const PantallaRegistro({super.key});
@@ -26,8 +26,36 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   bool _obscureConfirmar = true;
   bool _cargando = false;
 
-  bool _esEmailValido(String email) {
-    return RegExp(r'^[\w.-]+@[\w.-]+\.\w+$').hasMatch(email);
+  bool _esEmailValido(String email) =>
+      RegExp(r'^[\w.-]+@[\w.-]+\.\w+$').hasMatch(email);
+
+  InputDecoration _inputDecoration(
+    String hint,
+    IconData icon,
+    String? error, {
+    Widget? suffix,
+  }) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: Color(0xFF4A5568)),
+      prefixIcon: Icon(icon, color: const Color(0xFF8B96A5)),
+      errorText: error,
+      filled: true,
+      fillColor: const Color(0xFF161B22),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFF30363D)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFF30363D)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFF5B9BD5)),
+      ),
+      suffixIcon: suffix,
+    );
   }
 
   Future<void> _registrar() async {
@@ -39,7 +67,6 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     });
 
     bool valido = true;
-
     if (usuarioController.text.trim().isEmpty) {
       setState(() => _errorUsuario = 'El usuario es obligatorio');
       valido = false;
@@ -47,7 +74,6 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       setState(() => _errorUsuario = 'Mínimo 3 caracteres');
       valido = false;
     }
-
     if (emailController.text.trim().isEmpty) {
       setState(() => _errorEmail = 'El email es obligatorio');
       valido = false;
@@ -55,7 +81,6 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       setState(() => _errorEmail = 'Ingresa un email válido');
       valido = false;
     }
-
     if (passwordController.text.isEmpty) {
       setState(() => _errorPassword = 'La contraseña es obligatoria');
       valido = false;
@@ -63,7 +88,6 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       setState(() => _errorPassword = 'Mínimo 6 caracteres');
       valido = false;
     }
-
     if (confirmarPasswordController.text.isEmpty) {
       setState(() => _errorConfirmar = 'Confirma tu contraseña');
       valido = false;
@@ -71,11 +95,9 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       setState(() => _errorConfirmar = 'Las contraseñas no coinciden');
       valido = false;
     }
-
     if (!valido) return;
 
     setState(() => _cargando = true);
-
     try {
       final url = Uri.parse("https://fiberrural-api.onrender.com/registro");
       final response = await http
@@ -128,147 +150,168 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0D1117),
       appBar: AppBar(
         title: const Text(
           'FiberRural',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF5B9BD5),
+          ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        backgroundColor: const Color(0xFF161B22),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFF5B9BD5)),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: const Color(0xFF21262D), height: 1),
+        ),
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
-            child: Column(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 30),
+        child: Column(
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF1C2A3A),
+                border: Border.all(color: const Color(0xFF5B9BD5), width: 2),
+              ),
+              child: const Icon(
+                Icons.person_add,
+                size: 40,
+                color: Color(0xFF5B9BD5),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Crear Cuenta',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFE8EDF3),
+              ),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Regístrate para reportar fallas',
+              style: TextStyle(fontSize: 13, color: Color(0xFF8B96A5)),
+            ),
+            const SizedBox(height: 28),
+
+            TextField(
+              controller: usuarioController,
+              style: const TextStyle(color: Color(0xFFE8EDF3)),
+              decoration: _inputDecoration(
+                'Usuario',
+                Icons.person_outline,
+                _errorUsuario,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              style: const TextStyle(color: Color(0xFFE8EDF3)),
+              decoration: _inputDecoration(
+                'Correo electrónico',
+                Icons.email_outlined,
+                _errorEmail,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: passwordController,
+              obscureText: _obscurePassword,
+              style: const TextStyle(color: Color(0xFFE8EDF3)),
+              decoration: _inputDecoration(
+                'Contraseña',
+                Icons.lock_outline,
+                _errorPassword,
+                suffix: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    color: const Color(0xFF8B96A5),
+                  ),
+                  onPressed: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: confirmarPasswordController,
+              obscureText: _obscureConfirmar,
+              style: const TextStyle(color: Color(0xFFE8EDF3)),
+              decoration: _inputDecoration(
+                'Confirmar contraseña',
+                Icons.lock_outline,
+                _errorConfirmar,
+                suffix: IconButton(
+                  icon: Icon(
+                    _obscureConfirmar ? Icons.visibility_off : Icons.visibility,
+                    color: const Color(0xFF8B96A5),
+                  ),
+                  onPressed: () =>
+                      setState(() => _obscureConfirmar = !_obscureConfirmar),
+                ),
+              ),
+            ),
+            const SizedBox(height: 28),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _cargando ? null : _registrar,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF5B9BD5),
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: _cargando
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        'Crear Cuenta',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.person_add, size: 80, color: Colors.blue),
-                const SizedBox(height: 16),
                 const Text(
-                  'Crear Cuenta',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  '¿Ya tienes cuenta?',
+                  style: TextStyle(color: Color(0xFF8B96A5)),
                 ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Regístrate para reportar fallas',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                const SizedBox(height: 28),
-
-                // Usuario
-                TextField(
-                  controller: usuarioController,
-                  decoration: InputDecoration(
-                    hintText: 'Usuario',
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.person_outline),
-                    errorText: _errorUsuario,
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'Inicia sesión',
+                    style: TextStyle(color: Color(0xFF5B9BD5)),
                   ),
-                ),
-                const SizedBox(height: 16),
-
-                // Email
-                TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: 'Correo electrónico',
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    errorText: _errorEmail,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Contraseña
-                TextField(
-                  controller: passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    hintText: 'Contraseña',
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    errorText: _errorPassword,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                      onPressed: () {
-                        setState(() => _obscurePassword = !_obscurePassword);
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Confirmar contraseña
-                TextField(
-                  controller: confirmarPasswordController,
-                  obscureText: _obscureConfirmar,
-                  decoration: InputDecoration(
-                    hintText: 'Confirmar contraseña',
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    errorText: _errorConfirmar,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmar
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                      onPressed: () {
-                        setState(() => _obscureConfirmar = !_obscureConfirmar);
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 28),
-
-                // Botón registrar
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _cargando ? null : _registrar,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      elevation: 8,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: _cargando
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Text(
-                            'Crear Cuenta',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Volver al login
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('¿Ya tienes cuenta?'),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Inicia sesión'),
-                    ),
-                  ],
                 ),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );

@@ -18,7 +18,6 @@ class _ReportarFallaState extends State<ReportarFalla> {
   final TextEditingController _descripcionController = TextEditingController();
   final TextEditingController _direccionController = TextEditingController();
   bool _cargando = false;
-
   String? _errorTipo;
   String? _errorDescripcion;
   String? _errorDireccion;
@@ -29,9 +28,7 @@ class _ReportarFallaState extends State<ReportarFalla> {
       _errorDescripcion = null;
       _errorDireccion = null;
     });
-
     bool valido = true;
-
     if (_tipoFalla == null) {
       setState(() => _errorTipo = 'Selecciona un tipo de falla');
       valido = false;
@@ -44,15 +41,12 @@ class _ReportarFallaState extends State<ReportarFalla> {
       setState(() => _errorDireccion = 'La dirección es obligatoria');
       valido = false;
     }
-
     if (!valido) return;
 
     setState(() => _cargando = true);
-
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
-
       final url = Uri.parse(
         "https://fiberrural-api.onrender.com/crear-reporte",
       );
@@ -77,7 +71,7 @@ class _ReportarFallaState extends State<ReportarFalla> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Reporte enviado correctamente"),
-            backgroundColor: Colors.green,
+            backgroundColor: Color(0xFF4DDD88),
           ),
         );
         Navigator.pop(context);
@@ -106,84 +100,158 @@ class _ReportarFallaState extends State<ReportarFalla> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0D1117),
       appBar: AppBar(
-        title: const Text('Reportar Falla'),
-        backgroundColor: Colors.blue,
+        title: const Text(
+          'Reportar Falla',
+          style: TextStyle(
+            color: Color(0xFF5B9BD5),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFF161B22),
+        elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Color(0xFF5B9BD5)),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: const Color(0xFF21262D), height: 1),
+        ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Tipo de falla',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Tipo de falla',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFE8EDF3),
               ),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  errorText: _errorTipo,
+            ),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              dropdownColor: const Color(0xFF161B22),
+              style: const TextStyle(color: Color(0xFFE8EDF3)),
+              decoration: InputDecoration(
+                errorText: _errorTipo,
+                filled: true,
+                fillColor: const Color(0xFF161B22),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF30363D)),
                 ),
-                hint: const Text('Seleccione una opción'),
-                value: _tipoFalla,
-                items: const [
-                  DropdownMenuItem(
-                    value: 'sin_internet',
-                    child: Text('Sin Internet'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'internet_lento',
-                    child: Text('Internet Lento'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'cable_danado',
-                    child: Text('Cable Dañado'),
-                  ),
-                ],
-                onChanged: (value) => setState(() => _tipoFalla = value),
-              ),
-              const SizedBox(height: 25),
-              const Text(
-                'Descripción',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _descripcionController,
-                maxLines: 4,
-                decoration: InputDecoration(
-                  hintText: 'Escribe aquí el problema...',
-                  border: const OutlineInputBorder(),
-                  errorText: _errorDescripcion,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF30363D)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF5B9BD5)),
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'Dirección o referencia',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              hint: const Text(
+                'Seleccione una opción',
+                style: TextStyle(color: Color(0xFF4A5568)),
               ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _direccionController,
-                decoration: InputDecoration(
-                  hintText: 'Ejemplo: Calle 10 #8-15',
-                  border: const OutlineInputBorder(),
-                  errorText: _errorDireccion,
+              value: _tipoFalla,
+              items: const [
+                DropdownMenuItem(
+                  value: 'sin_internet',
+                  child: Text('Sin Internet'),
+                ),
+                DropdownMenuItem(
+                  value: 'internet_lento',
+                  child: Text('Internet Lento'),
+                ),
+                DropdownMenuItem(
+                  value: 'cable_danado',
+                  child: Text('Cable Dañado'),
+                ),
+              ],
+              onChanged: (value) => setState(() => _tipoFalla = value),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Descripción',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFE8EDF3),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _descripcionController,
+              maxLines: 4,
+              style: const TextStyle(color: Color(0xFFE8EDF3)),
+              decoration: InputDecoration(
+                hintText: 'Escribe aquí el problema...',
+                hintStyle: const TextStyle(color: Color(0xFF4A5568)),
+                errorText: _errorDescripcion,
+                filled: true,
+                fillColor: const Color(0xFF161B22),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF30363D)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF30363D)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF5B9BD5)),
                 ),
               ),
-              const SizedBox(height: 20),
-              Center(
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Dirección o referencia',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFE8EDF3),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _direccionController,
+              style: const TextStyle(color: Color(0xFFE8EDF3)),
+              decoration: InputDecoration(
+                hintText: 'Ejemplo: Calle 10 #8-15',
+                hintStyle: const TextStyle(color: Color(0xFF4A5568)),
+                errorText: _errorDireccion,
+                filled: true,
+                fillColor: const Color(0xFF161B22),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF30363D)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF30363D)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF5B9BD5)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 28),
+            Center(
+              child: SizedBox(
+                width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _cargando ? null : _enviarReporte,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    elevation: 5,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 14,
+                    backgroundColor: const Color(0xFF5B9BD5),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   child: _cargando
@@ -197,12 +265,16 @@ class _ReportarFallaState extends State<ReportarFalla> {
                         )
                       : const Text(
                           'Enviar reporte',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
