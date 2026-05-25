@@ -33,7 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── JWT CONFIG ─────────────────────────────────────
+#  JWT CONFIG 
 SECRET_KEY = "fiberrural_secret_key_2026"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 horas
@@ -56,7 +56,7 @@ def verificar_token(credentials: HTTPAuthorizationCredentials = Depends(security
     except JWTError:
         raise HTTPException(status_code=401, detail="Token inválido o expirado")
 
-# ── APP MÓVIL ──────────────────────────────────────
+#  APP MÓVIL 
 
 @app.post("/login")
 def login(data: LoginData):
@@ -115,7 +115,7 @@ def reportes_usuario(id_usuario: int, token: dict = Depends(verificar_token)):
             r["fecha"] = str(r["fecha"])
     return reportes
 
-# ── PANEL WEB ADMIN ────────────────────────────────
+# PANEL WEB ADMIN 
 
 @app.post("/admin/login")
 def admin_login(data: AdminLoginData):
